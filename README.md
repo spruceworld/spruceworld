@@ -1,3 +1,3 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/spruceworld/spruceworld/main/quote2.svg" alt="Typing Quote" />
-</div>
+<p align="center">
+  <img src="./quote3.svg" width="100%" alt="Explore. Dream. Discover." />
+</p>
