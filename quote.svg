@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220">
+  <style>
+    .quote-text {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      fill: #c9d1d9;
+      opacity: 0;
+      animation: fadeIn 4s ease-in forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" class="quote-text">
+    <tspan x="50%" dy="-2.5em">"Twenty years from now you will be more disappointed</tspan>
+    <tspan x="50%" dy="1.5em">by the things that you didn't do than by the ones you</tspan>
+    <tspan x="50%" dy="1.5em">did do. So throw off the bowlines. Sail away from the</tspan>
+    <tspan x="50%" dy="1.5em">safe harbor. Catch the trade winds in your sails.</tspan>
+    <tspan x="50%" dy="1.5em">Explore. Dream. Discover." – Unknown</tspan>
+  </text>
+</svg>
