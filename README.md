@@ -1,6 +1,6 @@
 <p align="center">
   <img
-    src="./quote4.svg"
+    src="./space_quote_github.gif"
     width="100%"
     alt="Explore. Dream. Discover."
   />
