@@ -1,111 +1,90 @@
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+import math, random
 from pathlib import Path
 
-svg = r'''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
-  <title id="title">Explore. Dream. Discover.</title>
-  <desc id="desc">A minimalist quote in clean, regular-weight typography against a nearly black deep-space sky with subtle twinkling stars.</desc>
-  <defs>
-    <radialGradient id="spaceGlow" cx="50%" cy="48%" r="60%">
-      <stop offset="0%" stop-color="#17151e" stop-opacity=".7"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="softWhiteGlow" x="-20%" y="-30%" width="140%" height="160%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="blur"/>
-      <feFlood flood-color="#ffffff" flood-opacity=".45" result="white"/>
-      <feComposite in="white" in2="blur" operator="in" result="glow"/>
-      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <style>
-      .star { fill: #ffffff; animation: twinkle 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-      .slow { animation-duration: 6s; }
-      .quick { animation-duration: 2.8s; }
-      .quote {
-        font-family: Inter, "Helvetica Neue", Arial, sans-serif;
-        font-size: 27px;
-        font-weight: 400;
-        font-style: normal;
-        letter-spacing: .1px;
-        line-height: 1.6;
-        text-anchor: middle;
-        fill: #f4f4f5;
-        filter: url(#softWhiteGlow);
-      }
-      .attribution {
-        font-family: Inter, "Helvetica Neue", Arial, sans-serif;
-        font-size: 16px;
-        font-weight: 400;
-        font-style: normal;
-        letter-spacing: 1.4px;
-        text-anchor: middle;
-        fill: #a8a8b0;
-      }
-      .tagline {
-        font-family: Inter, "Helvetica Neue", Arial, sans-serif;
-        font-size: 12px;
-        font-weight: 400;
-        letter-spacing: 5px;
-        text-anchor: middle;
-        fill: #777780;
-      }
-      .fade { animation: fade 9s ease-in-out infinite; }
-      @keyframes twinkle {
-        0%, 100% { opacity: .18; transform: scale(.8); }
-        50% { opacity: .9; transform: scale(1.2); }
-      }
-      @keyframes fade {
-        0%, 100% { opacity: .68; }
-        50% { opacity: 1; }
-      }
-      @media (prefers-reduced-motion: reduce) { .star, .fade { animation: none; } }
-    </style>
-  </defs>
+W, H = 1200, 420
+out = Path("/mnt/data/space_quote_github.gif")
+random.seed(22)
 
-  <rect width="1200" height="420" fill="#000000"/>
-  <rect width="1200" height="420" fill="url(#spaceGlow)"/>
+# Fixed sparse star field: x, y, radius, phase, speed
+stars = []
+for _ in range(75):
+    x = random.randint(18, W-18)
+    y = random.randint(16, H-16)
+    r = random.choice([1, 1, 1, 2])
+    phase = random.random() * math.tau
+    speed = random.uniform(0.7, 1.6)
+    stars.append((x, y, r, phase, speed))
 
-  <g>
-    <circle class="star quick" cx="55" cy="53" r="1.1"/>
-    <circle class="star slow" cx="142" cy="104" r=".9"/>
-    <circle class="star" cx="228" cy="41" r="1.3"/>
-    <circle class="star slow" cx="319" cy="77" r=".8"/>
-    <circle class="star quick" cx="408" cy="33" r="1"/>
-    <circle class="star" cx="496" cy="96" r=".8"/>
-    <circle class="star slow" cx="590" cy="48" r="1.2"/>
-    <circle class="star quick" cx="680" cy="82" r=".8"/>
-    <circle class="star" cx="772" cy="37" r="1.1"/>
-    <circle class="star slow" cx="862" cy="110" r=".9"/>
-    <circle class="star quick" cx="956" cy="46" r="1.1"/>
-    <circle class="star" cx="1062" cy="88" r=".8"/>
-    <circle class="star slow" cx="1140" cy="41" r="1.2"/>
-    <circle class="star" cx="79" cy="190" r=".8"/>
-    <circle class="star slow" cx="166" cy="326" r="1.1"/>
-    <circle class="star quick" cx="264" cy="375" r=".8"/>
-    <circle class="star" cx="360" cy="307" r="1"/>
-    <circle class="star slow" cx="454" cy="388" r=".8"/>
-    <circle class="star quick" cx="744" cy="370" r="1"/>
-    <circle class="star" cx="852" cy="326" r=".8"/>
-    <circle class="star slow" cx="970" cy="375" r="1.1"/>
-    <circle class="star quick" cx="1135" cy="285" r=".8"/>
-    <circle class="star slow" cx="1051" cy="205" r=".8"/>
-    <circle class="star" cx="924" cy="257" r=".9"/>
-    <circle class="star quick" cx="285" cy="219" r=".8"/>
-    <circle class="star slow" cx="895" cy="57" r=".8"/>
-    <circle class="star quick" cx="522" cy="344" r=".7"/>
-    <circle class="star slow" cx="644" cy="20" r=".8"/>
-  </g>
+font_paths = [
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+]
+font_path = next((p for p in font_paths if Path(p).exists()), None)
+if font_path:
+    quote_font = ImageFont.truetype(font_path, 27)
+    attr_font = ImageFont.truetype(font_path, 16)
+    tagline_font = ImageFont.truetype(font_path, 12)
+else:
+    quote_font = ImageFont.load_default()
+    attr_font = ImageFont.load_default()
+    tagline_font = ImageFont.load_default()
 
-  <g class="fade">
-    <text class="quote" x="600" y="111">
-      <tspan x="600" dy="0">“Twenty years from now you will be more disappointed</tspan>
-      <tspan x="600" dy="43">by the things that you didn't do than by the ones you</tspan>
-      <tspan x="600" dy="43">did do. So throw off the bowlines. Sail away from the</tspan>
-      <tspan x="600" dy="43">safe harbor. Catch the trade winds in your sails.”</tspan>
-    </text>
-    <text class="attribution" x="600" y="309">— Unknown</text>
-  </g>
+lines = [
+    "“Twenty years from now you will be more disappointed",
+    "by the things that you didn't do than by the ones you",
+    "did do. So throw off the bowlines. Sail away from the",
+    "safe harbor. Catch the trade winds in your sails.”",
+]
 
-  <text class="tagline" x="600" y="366">EXPLORE · DREAM · DISCOVER</text>
-</svg>
-'''
-path = Path("/mnt/data/space_quote_github_minimal.svg")
-path.write_text(svg, encoding="utf-8")
-print(f"Created: {path}")
+def centered_text(draw, y, text, font, fill, glow_alpha=0):
+    bbox = draw.textbbox((0, 0), text, font=font)
+    x = (W - (bbox[2] - bbox[0])) / 2
+    if glow_alpha:
+        # Draw a soft, restrained white glow behind the letters.
+        glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        gd = ImageDraw.Draw(glow)
+        gd.text((x, y), text, font=font, fill=(255, 255, 255, glow_alpha), stroke_width=0)
+        glow = glow.filter(ImageFilter.GaussianBlur(3))
+        canvas.alpha_composite(glow)
+    draw.text((x, y), text, font=font, fill=fill)
+
+frames = []
+nframes = 32
+for frame_i in range(nframes):
+    t = frame_i / nframes
+    # Nearly pure black background, with a barely visible neutral charcoal center.
+    base = Image.new("RGB", (W, H), (0, 0, 0))
+    # Extremely subtle charcoal atmospheric glow, not blue.
+    haze = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    hd = ImageDraw.Draw(haze)
+    hd.ellipse((220, 30, 980, 390), fill=(28, 26, 31, 22))
+    haze = haze.filter(ImageFilter.GaussianBlur(95))
+    canvas = base.convert("RGBA")
+    canvas.alpha_composite(haze)
+    d = ImageDraw.Draw(canvas)
+
+    # Twinkle brightness cycles at different speeds.
+    for x, y, r, phase, speed in stars:
+        v = (math.sin(t * math.tau * speed + phase) + 1) / 2
+        alpha = int(40 + 190 * (v ** 2))
+        rr = r if alpha < 180 else r + 0.3
+        d.ellipse((x-rr, y-rr, x+rr, y+rr), fill=(255, 255, 255, alpha))
+
+    # Slow opacity fade between a calm dim state and bright state.
+    fade = 0.72 + 0.28 * (0.5 - 0.5 * math.cos(t * math.tau))
+    text_alpha = int(255 * fade)
+    quote_fill = (244, 244, 246, text_alpha)
+    for idx, line in enumerate(lines):
+        centered_text(d, 103 + idx * 43, line, quote_font, quote_fill, glow_alpha=int(45 * fade))
+    centered_text(d, 299, "— Unknown", attr_font, (165, 165, 174, text_alpha))
+    centered_text(d, 358, "EXPLORE  ·  DREAM  ·  DISCOVER", tagline_font, (115, 115, 124, text_alpha))
+
+    # GIF palette conversion keeps file size manageable.
+    frames.append(canvas.convert("RGB").quantize(colors=128, method=Image.Quantize.MEDIANCUT))
+
+frames[0].save(
+    out, save_all=True, append_images=frames[1:],
+    duration=100, loop=0, optimize=True, disposal=2
+)
+print(f"Created animated GIF: {out} ({out.stat().st_size:,} bytes)")
