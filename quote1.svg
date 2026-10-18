@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="260" viewBox="0 0 800 260">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap');
+      
+      .quote-text {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 22px;
+        fill: #ffffff; /* Pure white text */
+        font-style: italic;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+      .author {
+        font-style: normal;
+        font-size: 0.85em;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        fill: #e6e6e6; /* Slightly dimmer for the author */
+      }
+      
+      /* Smooth fade-in for the whole group */
+      .fade-group {
+        opacity: 0;
+        animation: fadeIn 3s ease-in forwards;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+    </style>
+    
+    <!-- White Glow Effect -->
+    <filter id="whiteGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/> <!-- Doubled for a stronger glow -->
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Typing Animation Clip Path -->
+    <clipPath id="typewriter">
+      <rect x="0" y="0" width="0" height="100%">
+        <!-- calcMode="spline" makes the typing speed feel natural (eases in and out) -->
+        <animate attributeName="width" from="0" to="800" dur="6s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" />
+      </rect>
+    </clipPath>
+  </defs>
+
+  <!-- Apply the smooth fade, the typing clip-path, and the glow filter -->
+  <g class="fade-group" clip-path="url(#typewriter)" filter="url(#whiteGlow)">
+    <text x="50%" y="20%" text-anchor="middle" class="quote-text">
+      <tspan x="50%" dy="0">"Twenty years from now you will be more disappointed</tspan>
+      <tspan x="50%" dy="1.8em">by the things that you didn't do than by the ones you</tspan>
+      <tspan x="50%" dy="1.8em">did do. So throw off the bowlines. Sail away from the</tspan>
+      <tspan x="50%" dy="1.8em">safe harbor. Catch the trade winds in your sails.</tspan>
+      <tspan x="50%" dy="1.8em">Explore. Dream. Discover." <tspan class="author">— Unknown</tspan></tspan>
+    </text>
+  </g>
+</svg>
